@@ -1,4 +1,6 @@
-﻿namespace BNSApp
+﻿using System;
+
+namespace BNSApp
 {
     public class Search
     {
@@ -13,30 +15,33 @@
         /// <param name="nearestFuturePose"></param>
         public static void FindNearestMotion(MotionContainer trainData, Pose pose, int direction, int motionId, out Pose nearestCurrentPose, out Pose nearestFuturePose)
         {
+            var motionType = Utils.GetMotionType(motionId);
             var minCost = float.MaxValue;
             nearestCurrentPose = new Pose();
             nearestFuturePose = new Pose();
-            foreach (var motion in trainData.MotionList)
+            foreach (var trainMotion in trainData.MotionList)
             {
-                for (int i = 0; i < motion.Length; i++)
+                for (int i = 0; i < trainMotion.Length; i++)
                 {
-                    if (i - direction < 0 || motion.Length <= i - direction)
+                    if (i - direction < 0 || trainMotion.Length <= i - direction)
                     {
                         continue;
                     }
 
-                    if (i + direction < 0 || motion.Length <= i + direction)
+                    if (i + direction < 0 || trainMotion.Length <= i + direction)
                     {
                         continue;
                     }
 
-                    var currentPose = motion.PosList[i];
-                    var cost = Cost.CalcRootCost(currentPose, pose);
+                    var currentPose = trainMotion.PosList[i];
+                    var trainMotionType = Utils.GetMotionType(trainMotion.MotionId);
+                    var cost = Cost.CalcRootCost(currentPose, pose) *
+                               Cost.CalcMotionTypeCost(motionType, trainMotionType);
                     if (cost < minCost)
                     {
                         minCost = cost;
                         nearestCurrentPose = currentPose;
-                        nearestFuturePose = motion.PosList[i + direction];
+                        nearestFuturePose = trainMotion.PosList[i + direction];
                     }
                 }
             }

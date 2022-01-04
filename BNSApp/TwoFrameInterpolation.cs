@@ -67,6 +67,7 @@ namespace BNSApp
         void SearchBestPoseTwoFrame(MotionContainer trainData, Pose currentPos, Pose pastPos, int direction,
             int motionId, bool isFirstFrame, out Pose nearestCurrentPose, out Pose nearestFuturePose)
         {
+            var testMotionType = Utils.GetMotionType(motionId);
             var minCost = float.MaxValue;
             nearestCurrentPose = new Pose();
             nearestFuturePose = new Pose();
@@ -85,11 +86,14 @@ namespace BNSApp
                     }
 
                     var currentTrainPose = trainMotion.PosList[i];
+                    var trainMotionType = Utils.GetMotionType(trainMotion.MotionId);
                     var pastTrainPose = trainMotion.PosList[i - direction];
-                    var cost = Cost.CalcRootCost(currentTrainPose, currentPos);
+                    var cost = Cost.CalcRootCost(currentTrainPose, currentPos) *
+                               Cost.CalcMotionTypeCost(testMotionType, trainMotionType);
                     if (!isFirstFrame)
                     {
-                        cost += 0.5f * Cost.CalcRootCost(pastTrainPose, pastPos);
+                        cost += 0.5f * Cost.CalcRootCost(pastTrainPose, pastPos) *
+                                Cost.CalcMotionTypeCost(testMotionType, trainMotionType);
                     }
 
                     if (cost < minCost)

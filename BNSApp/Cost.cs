@@ -16,12 +16,28 @@
             var root1 = p1.Joints[0];
             for (int i = 0; i < p0.Joints.Count; i++)
             {
-                var j0 = p0.Joints[i] -root0;
+                var j0 = p0.Joints[i] - root0;
                 var j1 = p1.Joints[i] - root1;
                 cost += (j0 - j1).Length();
             }
 
             return cost;
+        }
+
+        /// <summary>
+        /// ２つのモーションが同一種類かで重みづけ
+        /// </summary>
+        /// <param name="type0"></param>
+        /// <param name="type1"></param>
+        /// <returns></returns>
+        public static float CalcMotionTypeCost(Utils.MotionType type0, Utils.MotionType type1)
+        {
+            if (type0 == type1)
+            {
+                return 1;
+            }
+
+            return 4;
         }
     }
 }

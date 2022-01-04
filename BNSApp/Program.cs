@@ -6,31 +6,73 @@ namespace BNSApp
     {
         private const string InputDirectory = "./input_data/input_data_original";
         private const string OutputDirectory = "./TestOutput";
-        
-        private static readonly MotionContainer TrainData = new MotionContainer($"{InputDirectory}/train/train.csv");
-        private static readonly MotionContainer EasyData = new MotionContainer($"{InputDirectory}/test/test_easy.csv", 5);
-        private static readonly MotionContainer NormalData = new MotionContainer($"{InputDirectory}/test/test_normal.csv", 15);
-        private static readonly MotionContainer HardData = new MotionContainer($"{InputDirectory}/test/test_hard.csv", 45);
 
-        private static void SolveOneTestFile(MotionContainer testData, MotionContainer trainData, ISolver solver,
-            string outputFileName)
+        private static void RunAll(ISolver solver, MotionContainer trainData,
+            MotionContainer easyTest, MotionContainer normalTest, MotionContainer hardTest)
         {
-            foreach (var motionData in testData.MotionList)
+            SolveOneTestFile(easyTest, trainData, solver);
+            SolveOneTestFile(normalTest, trainData, solver);
+            SolveOneTestFile(hardTest, trainData, solver);
+        }
+
+        private static void SolveOneTestFile(MotionContainer testData, MotionContainer trainData, ISolver solver)
+        {
+            var outputFileName = Utils.GetOutputFileName(testData, OutputDirectory, solver.GetName());
+            foreach (var testMotion in testData.MotionList)
             {
-                solver.Solve(motionData, trainData);
-                Console.WriteLine($"{motionData.MotionId} Finish {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+                SolveOneMotion(testMotion, trainData, solver);
             }
 
             testData.SaveData(outputFileName);
         }
-        
+
+        private static void SolveOneMotion(MotionData testMotion, MotionContainer trainData, ISolver solver)
+        {
+            solver.Solve(testMotion, trainData);
+            Console.WriteLine($"{testMotion.MotionId} Finish {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+        }
+
+        private static void SolveOneMotionById(MotionContainer testData, int motionId, MotionContainer trainData,
+            ISolver solver)
+        {
+            var testMotion = testData.GetMotionById(motionId);
+            var testOutputFileName = Utils.GetOutputFileName(testData, OutputDirectory, solver.GetName());
+            SolveOneMotion(testMotion, trainData, solver);
+            testData.SaveData(testOutputFileName);
+        }
+
         static void Main(string[] args)
         {
+            var trainData = new MotionContainer($"{InputDirectory}/train/train.csv");
+            var easyData = new MotionContainer($"{InputDirectory}/test/test_easy.csv", 5);
+            var normalData = new MotionContainer($"{InputDirectory}/test/test_normal.csv", 15);
+            var hardData = new MotionContainer($"{InputDirectory}/test/test_hard.csv", 45);
+
+
             var solver = new TwoFrameInterpolation();
             Console.WriteLine($"Start: {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
-            var testData = EasyData;
-            var testOutputFileName = Utils.GetOutputFileName(testData, OutputDirectory);
-            SolveOneTestFile(testData, TrainData, solver, testOutputFileName);
+
+            // 特定のモーションだけ動かすならここ
+            if (false)
+            {
+                var testData = normalData;
+                var id = 122;
+                SolveOneMotionById(testData, id, trainData, solver);
+            }
+
+            // １ファイルまとめて処理するならここ
+            if (true)
+            {
+                var testData = normalData;
+                SolveOneTestFile(testData, trainData, solver);
+            }
+
+            // 全部まとめて処理するならここ
+            if (false)
+            {
+                RunAll(solver, trainData, easyData, normalData, hardData);
+            }
+
             Console.Write($"Finish {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
         }
     }

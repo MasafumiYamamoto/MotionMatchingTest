@@ -111,13 +111,13 @@ namespace BNSApp
             }
         }
 
-        public static string GetOutputFileName(MotionContainer testData, string outputDirectory)
+        public static string GetOutputFileName(MotionContainer testData, string outputDirectory, string postFix)
         {
             var outputFileName = testData.TestDifficulty switch
             {
-                Difficulty.Easy => $"{outputDirectory}/TestEasyOutput.csv",
-                Difficulty.Normal => $"{outputDirectory}/TestNormalOutput.csv",
-                Difficulty.Hard => $"{outputDirectory}/TestHardOutput.csv",
+                Difficulty.Easy => $"{outputDirectory}/TestEasyOutput{postFix}.csv",
+                Difficulty.Normal => $"{outputDirectory}/TestNormalOutput{postFix}.csv",
+                Difficulty.Hard => $"{outputDirectory}/TestHardOutput{postFix}.csv",
                 _ => throw new ArgumentOutOfRangeException()
             };
 

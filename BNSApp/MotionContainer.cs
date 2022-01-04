@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 
 namespace BNSApp
@@ -67,6 +68,16 @@ namespace BNSApp
             // 最後に残ったデータを保存
             var lastMotion = new MotionData(currentMotionId, tmpFrameIdList, tmpPosList, skipFrames);
             MotionList.Add(lastMotion);
+        }
+
+        /// <summary>
+        /// ID指定で対応するモーションを探す
+        /// </summary>
+        /// <param name="motionId"></param>
+        /// <returns></returns>
+        public MotionData GetMotionById(int motionId)
+        {
+            return MotionList.FirstOrDefault(motionData => motionData.MotionId == motionId);
         }
 
         public void SaveData(string fileName)

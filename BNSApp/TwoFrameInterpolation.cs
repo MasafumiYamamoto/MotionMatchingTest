@@ -29,10 +29,12 @@ namespace BNSApp
                     var nextNextPos = motionData.PosList[nextMeasuredId - 1];
 
                     // 補間２フレーム目以降は計算済みの値を利用する
-                    if (i != 1)
+                    if (i > 1)
                     {
                         prevPos = forwardList[^1];
                         nextPos = backwardList[^1];
+                        prevPrevPos = forwardList[^1];
+                        nextNextPos = backwardList[^1];
                         if (i > 2)
                         {
                             prevPrevPos = forwardList[^2];

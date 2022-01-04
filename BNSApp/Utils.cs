@@ -115,9 +115,9 @@ namespace BNSApp
         {
             var outputFileName = testData.TestDifficulty switch
             {
-                Difficulty.Easy => $"{outputDirectory}/TestEasyOutput{postFix}.csv",
-                Difficulty.Normal => $"{outputDirectory}/TestNormalOutput{postFix}.csv",
-                Difficulty.Hard => $"{outputDirectory}/TestHardOutput{postFix}.csv",
+                Difficulty.Easy => $"{outputDirectory}/EasyOutput{postFix}.csv",
+                Difficulty.Normal => $"{outputDirectory}/NormalOutput{postFix}.csv",
+                Difficulty.Hard => $"{outputDirectory}/HardOutput{postFix}.csv",
                 _ => throw new ArgumentOutOfRangeException()
             };
 

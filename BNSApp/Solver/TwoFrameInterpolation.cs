@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BNSApp
+namespace BNSApp.Solver
 {
     /// <summary>
     /// 2フレーム分の情報を利用して補間を行う
@@ -106,7 +106,7 @@ namespace BNSApp
                 }
             }
 
-            Console.WriteLine($"{minCost}, {Utils.GetMotionType(motionId)}, {nearestMotionType}");
+            Console.WriteLine($"{Utils.GetMotionType(motionId)}, {nearestMotionType}, {minCost}");
         }
     }
 }

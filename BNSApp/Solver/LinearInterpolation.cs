@@ -1,4 +1,4 @@
-﻿namespace BNSApp
+﻿namespace BNSApp.Solver
 {
     /// <summary>
     /// 既知のフレーム情報のみを利用して、線形補間によってポーズを推定する

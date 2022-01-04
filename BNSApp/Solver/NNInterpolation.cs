@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BNSApp
+namespace BNSApp.Solver
 {
     /// <summary>
     /// 最近傍ポーズを利用して次のポーズを計算する

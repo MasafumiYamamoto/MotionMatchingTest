@@ -1,4 +1,4 @@
-﻿namespace BNSApp
+﻿namespace BNSApp.Solver
 {
     public interface ISolver
     {

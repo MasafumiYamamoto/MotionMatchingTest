@@ -59,9 +59,9 @@
             // NOTE: 後ろ歩きだけは特殊なので別扱いにしてみる
             if (type0 == Utils.MotionType.Back || type1 == Utils.MotionType.Back)
             {
-                return 2;
+                return 4;
             }
-            
+
             return 1.5f;
         }
     }

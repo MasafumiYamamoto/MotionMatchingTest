@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace BNSApp.Solver
 {
     /// <summary>
     /// 2フレーム分の情報を利用して補間を行う
+    /// 同時に線形補間で求めた値もいい感じに利用する
     /// </summary>
-    public class TwoFrameInterpolation : ISolver
+    public class BlendInterpolation : ISolver
     {
         public string GetName()
         {
-            return "TwoNN";
+            return "BlendNN";
         }
         public void Solve(MotionData motionData, MotionContainer trainData)
         {
@@ -42,18 +44,33 @@ namespace BNSApp.Solver
                             nextNextPos = backwardList[^2];
                         }
                     }
-
+                    
                     var forwardPos = Interp(trainData, prevPos, prevPrevPos, 1, motionData.MotionId);
                     var backwardPos = Interp(trainData, nextPos, nextNextPos, -1, motionData.MotionId);
-                    forwardList.Add(forwardPos);
-                    backwardList.Add(backwardPos);
+                    
+                    // 線形補間で求めた値とブレンド
+                    // 線形補間で利用する姿勢は前後両方から計算する必要がある点に注意
+                    var prevMeasuredPos = motionData.PosList[prevMeasuredId - 1];
+                    var nextMeasuredPos = motionData.PosList[nextMeasuredId - 1];
+                    var forwardLinearPos = Merge.LinearBlend(prevMeasuredPos, nextMeasuredPos,
+                        (float)(i - 1) / (motionData.SkipFrames - 2));
+                    var backwardLinearPos = Merge.LinearBlend(prevMeasuredPos, nextMeasuredPos,
+                        (float)(motionData.SkipFrames - i - 1) / (motionData.SkipFrames - 2));
+                    // 価が大きいほど線形補間で求めた値を採用するようになる
+                    var linearBlendRatio = Distribution.Sample(i, motionData.SkipFrames) +
+                                           Distribution.Sample(motionData.SkipFrames - i, motionData.SkipFrames);
+                    var forwardBlendPos = Merge.LinearBlend(forwardPos, forwardLinearPos, linearBlendRatio);
+                    var backwardBlendPos = Merge.LinearBlend(backwardPos, backwardLinearPos, linearBlendRatio);
+
+                    forwardList.Add(forwardBlendPos);
+                    backwardList.Add(backwardBlendPos);
                 }
 
                 for (int i = 1; i < motionData.SkipFrames; i++)
                 {
-                    var pos = Merge.LinearBlend(forwardList[i - 1], backwardList[^i],
+                    var estimatedPos = Merge.LinearBlend(forwardList[i - 1], backwardList[^i],
                         (float)(i - 1) / (motionData.SkipFrames - 2));
-                    motionData.PosList[prevMeasuredId - 1 + i] = pos;
+                    motionData.PosList[prevMeasuredId - 1 + i] = estimatedPos;
                 }
             }
         }

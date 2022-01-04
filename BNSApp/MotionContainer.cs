@@ -4,8 +4,16 @@ using System.Numerics;
 
 namespace BNSApp
 {
+    public enum Difficulty
+    {
+        Easy,
+        Normal,
+        Hard
+    }
+    
     public class MotionContainer
     {
+        public Difficulty TestDifficulty;
         private readonly string _fileName;
         private readonly int _skipFrames;
         private readonly string[] _header;
@@ -15,6 +23,20 @@ namespace BNSApp
         {
             _fileName = fileName;
             _skipFrames = skipFrames;
+            switch (skipFrames)
+            {
+                case 5:
+                    TestDifficulty = Difficulty.Easy;
+                    break;
+                case 15:
+                    TestDifficulty = Difficulty.Normal;
+                    break;
+                case 45:
+                    TestDifficulty = Difficulty.Hard;
+                    break;
+                default:
+                    break;
+            }
 
             Utils.LoadData(fileName, out var header, out var motionIdList, out var frameIdList, out var posList);
             _header = header;

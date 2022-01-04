@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Text;
@@ -61,6 +62,66 @@ namespace BNSApp
             {
                 res.Add(pos[i] + delta[i]);
             }
+        }
+
+        public static Pose ComputeDelta(Pose currentPose, Pose futurePose)
+        {
+            return futurePose.Minus(currentPose);
+        }
+        
+        public enum MotionType
+        {
+            Hello,
+            Hand1,
+            Hand2,
+            Run,
+            Finger,
+            Walk,
+            Back,
+            Side1,
+            Side2,
+        }
+
+        public static MotionType GetMotionType(int motionId)
+        {
+            switch (motionId)
+            {
+                case <= 14:
+                    return MotionType.Hello;
+                case <= 28:
+                    return MotionType.Hand1;
+                case <= 42:
+                    return MotionType.Hand2;
+                case <= 56:
+                    return MotionType.Run;
+                case <= 70:
+                    return MotionType.Finger;
+                case <= 84:
+                    return MotionType.Run;
+                case <= 100:
+                    return MotionType.Walk;
+                case <= 112:
+                    return MotionType.Walk;
+                case <= 127:
+                    return MotionType.Back;
+                case <= 142:
+                    return MotionType.Side1;
+                default:
+                    return MotionType.Side2;
+            }
+        }
+
+        public static string GetOutputFileName(MotionContainer testData, string outputDirectory)
+        {
+            var outputFileName = testData.TestDifficulty switch
+            {
+                Difficulty.Easy => $"{outputDirectory}/TestEasyOutput.csv",
+                Difficulty.Normal => $"{outputDirectory}/TestNormalOutput.csv",
+                Difficulty.Hard => $"{outputDirectory}/TestHardOutput.csv",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            return outputFileName;
         }
     }
 }

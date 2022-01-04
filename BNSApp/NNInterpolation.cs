@@ -8,6 +8,11 @@ namespace BNSApp
     /// </summary>
     public class NNInterpolation : ISolver
     {
+        public string GetName()
+        {
+            return "SingleNN";
+        }
+        
         public void Solve(MotionData motionData, MotionContainer trainData){
             for (int loop = 0; loop < motionData.Loop; loop++)
             {

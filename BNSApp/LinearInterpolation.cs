@@ -8,6 +8,10 @@ namespace BNSApp
     /// </summary>
     public class LinearInterpolation : ISolver
     {
+        public string GetName()
+        {
+            return "Linear";
+        }
         public void Solve(MotionData motionData, MotionContainer trainData)
         {
             for (int loop = 0; loop < motionData.Loop; loop++)

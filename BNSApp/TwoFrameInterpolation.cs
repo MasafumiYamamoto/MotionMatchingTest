@@ -7,6 +7,10 @@ namespace BNSApp
     /// </summary>
     public class TwoFrameInterpolation : ISolver
     {
+        public string GetName()
+        {
+            return "TwoNN";
+        }
         public void Solve(MotionData motionData, MotionContainer trainData)
         {
             for (int loop = 0; loop < motionData.Loop; loop++)

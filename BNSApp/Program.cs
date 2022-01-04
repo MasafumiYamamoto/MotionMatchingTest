@@ -1,4 +1,5 @@
 ﻿using System;
+using BNSApp.Solver;
 
 namespace BNSApp
 {
@@ -48,27 +49,27 @@ namespace BNSApp
             var normalData = new MotionContainer($"{InputDirectory}/test/test_normal.csv", 15);
             var hardData = new MotionContainer($"{InputDirectory}/test/test_hard.csv", 45);
             
-            var solver = new TwoFrameInterpolation();
+            var solver = new BlendInterpolation();
             var startTime = DateTime.Now;
             Console.WriteLine($"Start: {startTime:yyyy/MM/dd HH:mm:ss}");
 
             // 特定のモーションだけ動かすならここ
-            if (true)
+            if (false)
             {
-                var testData = normalData;
-                var id = 122;
+                var testData = hardData;
+                var id = 98;
                 SolveOneMotionById(testData, id, trainData, solver);
             }
 
             // １ファイルまとめて処理するならここ
             if (false)
             {
-                var testData = normalData;
+                var testData = easyData;
                 SolveOneTestFile(testData, trainData, solver);
             }
 
             // 全部まとめて処理するならここ
-            if (false)
+            if (true)
             {
                 RunAll(solver, trainData, easyData, normalData, hardData);
             }

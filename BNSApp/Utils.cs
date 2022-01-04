@@ -100,7 +100,7 @@ namespace BNSApp
                     return MotionType.Run;
                 case <= 100:
                     return MotionType.Walk;
-                case <= 112:
+                case <= 113:
                     return MotionType.Walk;
                 case <= 127:
                     return MotionType.Back;

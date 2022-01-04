@@ -23,6 +23,25 @@
 
             return cost;
         }
+        
+        /// <summary>
+        /// 単純な各ボーンの位置情報を利用してのコスト計算
+        /// </summary>
+        /// <param name="p0"></param>
+        /// <param name="p1"></param>
+        /// <returns></returns>
+        public static float CalcAbsolutePosCost(Pose p0, Pose p1)
+        {
+            var cost = 0f;
+            for (int i = 0; i < p0.Joints.Count; i++)
+            {
+                var j0 = p0.Joints[i];
+                var j1 = p1.Joints[i];
+                cost += (j0 - j1).Length();
+            }
+
+            return cost;
+        }
 
         /// <summary>
         /// ２つのモーションが同一種類かで重みづけ

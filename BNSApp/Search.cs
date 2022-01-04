@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BNSApp
+﻿namespace BNSApp
 {
     public class Search
     {

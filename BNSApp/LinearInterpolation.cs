@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-
-namespace BNSApp
+﻿namespace BNSApp
 {
     /// <summary>
     /// 既知のフレーム情報のみを利用して、線形補間によってポーズを推定する

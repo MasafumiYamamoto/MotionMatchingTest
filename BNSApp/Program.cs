@@ -53,7 +53,7 @@ namespace BNSApp
             Console.WriteLine($"Start: {startTime:yyyy/MM/dd HH:mm:ss}");
 
             // 特定のモーションだけ動かすならここ
-            if (false)
+            if (true)
             {
                 var testData = normalData;
                 var id = 122;
@@ -61,7 +61,7 @@ namespace BNSApp
             }
 
             // １ファイルまとめて処理するならここ
-            if (true)
+            if (false)
             {
                 var testData = normalData;
                 SolveOneTestFile(testData, trainData, solver);

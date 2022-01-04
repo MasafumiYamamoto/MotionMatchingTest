@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BNSApp
 {
@@ -42,8 +43,8 @@ namespace BNSApp
                         }
                     }
 
-                    var forwardPos = Interp(trainData, prevPos, prevPrevPos, 1, motionData.MotionId, i == 1);
-                    var backwardPos = Interp(trainData, nextPos, nextNextPos, -1, motionData.MotionId, i == 1);
+                    var forwardPos = Interp(trainData, prevPos, prevPrevPos, 1, motionData.MotionId);
+                    var backwardPos = Interp(trainData, nextPos, nextNextPos, -1, motionData.MotionId);
                     forwardList.Add(forwardPos);
                     backwardList.Add(backwardPos);
                 }
@@ -57,20 +58,20 @@ namespace BNSApp
             }
         }
 
-        Pose Interp(MotionContainer trainData, Pose currentPos, Pose pastPos, int direction, int motionId,
-            bool isFirstFrame)
+        Pose Interp(MotionContainer trainData, Pose currentPos, Pose pastPos, int direction, int motionId)
         {
-            SearchBestPoseTwoFrame(trainData, currentPos, pastPos, direction, motionId, isFirstFrame,
+            SearchBestPoseTwoFrame(trainData, currentPos, pastPos, direction, motionId, 
                 out var nearestCurrentPose, out var nearestFuturePose);
             var deltaPos = Utils.ComputeDelta(nearestCurrentPose, nearestFuturePose);
             return currentPos.Add(deltaPos);
         }
 
         void SearchBestPoseTwoFrame(MotionContainer trainData, Pose currentPos, Pose pastPos, int direction,
-            int motionId, bool isFirstFrame, out Pose nearestCurrentPose, out Pose nearestFuturePose)
+            int motionId, out Pose nearestCurrentPose, out Pose nearestFuturePose)
         {
             var testMotionType = Utils.GetMotionType(motionId);
             var minCost = float.MaxValue;
+            var nearestMotionType = Utils.MotionType.Back;
             nearestCurrentPose = new Pose();
             nearestFuturePose = new Pose();
             foreach (var trainMotion in trainData.MotionList)
@@ -92,20 +93,20 @@ namespace BNSApp
                     var pastTrainPose = trainMotion.PosList[i - direction];
                     var cost = Cost.CalcRootCost(currentTrainPose, currentPos) *
                                Cost.CalcMotionTypeCost(testMotionType, trainMotionType);
-                    if (!isFirstFrame)
-                    {
-                        cost += 0.5f * Cost.CalcRootCost(pastTrainPose, pastPos) *
-                                Cost.CalcMotionTypeCost(testMotionType, trainMotionType);
-                    }
+                    cost += 0.5f * Cost.CalcRootCost(pastTrainPose, pastPos) *
+                            Cost.CalcMotionTypeCost(testMotionType, trainMotionType);
 
                     if (cost < minCost)
                     {
                         minCost = cost;
                         nearestCurrentPose = currentTrainPose;
                         nearestFuturePose = trainMotion.PosList[i + direction];
+                        nearestMotionType = Utils.GetMotionType(trainMotion.MotionId);
                     }
                 }
             }
+
+            Console.WriteLine($"{minCost}, {Utils.GetMotionType(motionId)}, {nearestMotionType}");
         }
     }
 }

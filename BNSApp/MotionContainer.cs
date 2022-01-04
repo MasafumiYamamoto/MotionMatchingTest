@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -90,6 +91,7 @@ namespace BNSApp
                     motionData.SaveMotion(sw);
                 }
             }
+            Console.WriteLine($"{fileName} was written!");
         }
     }
 

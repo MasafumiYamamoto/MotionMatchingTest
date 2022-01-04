@@ -47,10 +47,10 @@ namespace BNSApp
             var easyData = new MotionContainer($"{InputDirectory}/test/test_easy.csv", 5);
             var normalData = new MotionContainer($"{InputDirectory}/test/test_normal.csv", 15);
             var hardData = new MotionContainer($"{InputDirectory}/test/test_hard.csv", 45);
-
-
+            
             var solver = new TwoFrameInterpolation();
-            Console.WriteLine($"Start: {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+            var startTime = DateTime.Now;
+            Console.WriteLine($"Start: {startTime:yyyy/MM/dd HH:mm:ss}");
 
             // 特定のモーションだけ動かすならここ
             if (false)
@@ -73,7 +73,9 @@ namespace BNSApp
                 RunAll(solver, trainData, easyData, normalData, hardData);
             }
 
-            Console.Write($"Finish {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+            var finishTime = DateTime.Now;
+            Console.WriteLine($"Finish {finishTime:yyyy/MM/dd HH:mm:ss}");
+            Console.WriteLine($"Total Running Time: {finishTime-startTime}");
         }
     }
 }

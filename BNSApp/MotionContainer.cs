@@ -20,11 +20,13 @@ namespace BNSApp
         private readonly int _skipFrames;
         private readonly string[] _header;
         public readonly List<MotionData> MotionList = new List<MotionData>();
+        public readonly int _blendDelta;
 
-        public MotionContainer(string fileName, int skipFrames = 1)
+        public MotionContainer(string fileName, int skipFrames = 1, int blendDelta = 1)
         {
             _fileName = fileName;
             _skipFrames = skipFrames;
+            _blendDelta = blendDelta;
             switch (skipFrames)
             {
                 case 5:
@@ -55,7 +57,7 @@ namespace BNSApp
                 // モーションIDが変わったらこれまでの情報を保存してリセット
                 if (motionId != currentMotionId)
                 {
-                    var motion = new MotionData(currentMotionId, tmpFrameIdList, tmpPosList, skipFrames);
+                    var motion = new MotionData(currentMotionId, tmpFrameIdList, tmpPosList, skipFrames, blendDelta);
                     MotionList.Add(motion);
                     tmpFrameIdList = new List<int>();
                     tmpPosList = new List<List<Vector3>>();
@@ -67,7 +69,7 @@ namespace BNSApp
             }
 
             // 最後に残ったデータを保存
-            var lastMotion = new MotionData(currentMotionId, tmpFrameIdList, tmpPosList, skipFrames);
+            var lastMotion = new MotionData(currentMotionId, tmpFrameIdList, tmpPosList, skipFrames, blendDelta);
             MotionList.Add(lastMotion);
         }
 
@@ -101,13 +103,15 @@ namespace BNSApp
         public readonly List<int> FrameList;
         public readonly List<Pose> PosList;
         public readonly int SkipFrames;
+        public readonly int Delta;
         public readonly int Length;
         public readonly int Loop;
 
-        public MotionData(int motionId, List<int> frameList, List<List<Vector3>> posList, int skipFrames)
+        public MotionData(int motionId, List<int> frameList, List<List<Vector3>> posList, int skipFrames, int delta)
         {
             MotionId = motionId;
             FrameList = frameList;
+            Delta = delta;
             PosList = new List<Pose>();
             foreach (var pose in posList)
             {

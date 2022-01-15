@@ -35,8 +35,8 @@ namespace BNSApp.Solver
                     switch (i)
                     {
                         case 1:
-                            forwardPos =InterpFirstFrame(trainData, prevPos, 1, testData.MotionId);
-                            backwardPos = InterpFirstFrame(trainData, nextPos, -1, testData.MotionId);
+                            forwardPos =Utils.FindNextFrame(trainData, prevPos, 1, testData.MotionId);
+                            backwardPos = Utils.FindNextFrame(trainData, nextPos, -1, testData.MotionId);
                             break;
                         // 補間２フレーム目以降は計算済みの値を利用する
                         case > 1:
@@ -66,14 +66,6 @@ namespace BNSApp.Solver
                     testData.PosList[prevMeasuredId - 1 + i] = estimatedPos;
                 }
             }
-        }
-
-        Pose InterpFirstFrame(MotionContainer trainData, Pose currentPos, int direction, int motionId)
-        {
-            SearchBestPose(trainData, currentPos, direction, motionId,
-                out var nearestCurrentPose, out var nearestFuturePose);
-            var deltaPos = Utils.ComputeDelta(nearestCurrentPose, nearestFuturePose);
-            return currentPos.Add(deltaPos);
         }
 
         Pose Interp(MotionContainer trainData, Pose currentPos, Pose pastPos, int motionId)
@@ -130,48 +122,6 @@ namespace BNSApp.Solver
                             nearestFuturePose.Joints[0] = trainMotion.PosList[i + (direction > 0 ? 1 : -1)].Joints[0];
                             nearestMotionType = Utils.GetMotionType(trainMotion.MotionId);
                         }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 最も近いポーズとその時の次のフレームの値を返す
-        /// </summary>
-        /// <param name="trainData"></param>
-        /// <param name="currentPos"></param>
-        /// <param name="direction"></param>
-        /// <param name="motionId"></param>
-        /// <param name="nearestCurrentPose"></param>
-        /// <param name="nearestFuturePose"></param>
-        void SearchBestPose(MotionContainer trainData, Pose currentPos, int direction,
-            int motionId, out Pose nearestCurrentPose, out Pose nearestFuturePose)
-        {
-            var testMotionType = Utils.GetMotionType(motionId);
-            var minCost = float.MaxValue;
-            var nearestMotionType = Utils.MotionType.Back;
-            nearestCurrentPose = new Pose();
-            nearestFuturePose = new Pose();
-
-            foreach (var trainMotion in trainData.MotionList)
-            {
-                for (var i = 0; i < trainMotion.Length; i++)
-                {
-                    if (i + direction < 0 || trainMotion.Length <= i + direction)
-                    {
-                        continue;
-                    }
-
-                    var currentTrainPose = trainMotion.PosList[i];
-                    var trainMotionType = Utils.GetMotionType(trainMotion.MotionId);
-                    var cost = Cost.CalcRootCost(currentTrainPose, currentPos) *
-                               Cost.CalcMotionTypeCost(testMotionType, trainMotionType);
-                    if (cost < minCost)
-                    {
-                        minCost = cost;
-                        nearestCurrentPose = currentTrainPose;
-                        nearestFuturePose = trainMotion.PosList[i + direction];
-                        nearestMotionType = Utils.GetMotionType(trainMotion.MotionId);
                     }
                 }
             }

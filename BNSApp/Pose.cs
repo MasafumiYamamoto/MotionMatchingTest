@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using BNSApp.Skelton;
 
 namespace BNSApp
 {
@@ -10,6 +11,11 @@ namespace BNSApp
         public Pose()
         {
             Joints = new List<Vector3>();
+            // 骨を初期化
+            foreach (var keyValuePair in SkeltonData.BoneNameIndexList)
+            {
+                Joints.Add(Vector3.Zero);
+            }
         }
         public Pose(List<Vector3> joints)
         {
@@ -21,7 +27,7 @@ namespace BNSApp
             var res = new Pose();
             for (var i = 0; i < other.Joints.Count; i++)
             {
-                res.Joints.Add(Joints[i] + other.Joints[i]);
+                res.Joints[i] = Joints[i] + other.Joints[i];
             }
 
             return res;
@@ -32,7 +38,7 @@ namespace BNSApp
             var res = new Pose();
             for (var i = 0; i < other.Joints.Count; i++)
             {
-                res.Joints.Add(Joints[i] - other.Joints[i]);
+                res.Joints[i] = Joints[i] - other.Joints[i];
             }
 
             return res;
@@ -43,7 +49,7 @@ namespace BNSApp
             var res = new Pose();
             for (var i = 0; i < Joints.Count; i++)
             {
-                res.Joints.Add(Joints[i] / value);
+                res.Joints[i] = Joints[i] / value;
             }
 
             return res;
@@ -54,7 +60,7 @@ namespace BNSApp
             var res = new Pose();
             for (var i = 0; i < Joints.Count; i++)
             {
-                res.Joints.Add(Joints[i] * value);
+                res.Joints[i] = Joints[i] * value;
             }
 
             return res;

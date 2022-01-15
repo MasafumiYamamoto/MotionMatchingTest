@@ -68,6 +68,19 @@ namespace BNSApp
         {
             return futurePose.Minus(currentPose);
         }
+
+        /// <summary>
+        /// currentPoseからfuturePoseへのボーンの回転情報を転写する
+        /// ついでにルートはそのまま動かす
+        /// </summary>
+        /// <param name="currentPose"></param>
+        /// <param name="futurePose"></param>
+        /// <param name="dstPose"></param>
+        public static void RotationDelta(Pose currentPose, Pose futurePose, Pose dstPose)
+        {
+            var rootMove = futurePose.Joints[0] - currentPose.Joints[0];
+            
+        }
         
         public enum MotionType
         {

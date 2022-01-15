@@ -143,5 +143,18 @@ namespace BNSApp
 
             return -Vector3.Dot(bone0, bone1);
         }
+
+        /// <summary>
+        /// 現在のフレームと次の既知フレームとの差分に応じて未来のコストをどれだけ考慮するか計算する
+        /// </summary>
+        /// <param name="currentFrameIndex"></param>
+        /// <param name="futureFrameIndex"></param>
+        /// <returns></returns>
+        public static float CalcFrameCost(int currentFrameIndex, int futureFrameIndex)
+        {
+            var delta = futureFrameIndex - currentFrameIndex;
+            var k =  (45 - delta) / 45f;
+            return k*4;
+        }
     }
 }

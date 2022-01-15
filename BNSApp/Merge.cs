@@ -18,5 +18,25 @@ namespace BNSApp
             var p1 = backward.Mult(ratio);
             return p0.Add(p1);
         }
+
+        /// <summary>
+        /// ratioが１付近で急激にbackwardを採用するようにする
+        /// </summary>
+        /// <param name="forward"></param>
+        /// <param name="backward"></param>
+        /// <param name="ratio"></param>
+        /// <returns></returns>
+        public static Pose SmoothStepBlend(Pose forward, Pose backward, float ratio)
+        {
+            ratio = MathF.Min(ratio, 1);
+            ratio = SmoothStep(0.3f, 0.7f, ratio);
+            return LinearBlend(forward, backward, ratio);
+        }
+
+        private static float SmoothStep(float a, float b, float x)
+        {
+            var t = MathF.Min(1, MathF.Max(0, (x - a) / (b - a)));
+            return t * t * (3 - 2 * t);
+        }
     }
 }

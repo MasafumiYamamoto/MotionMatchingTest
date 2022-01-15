@@ -68,7 +68,7 @@ namespace BNSApp.Solver
 
                 for (int i = 1; i < motionData.SkipFrames; i++)
                 {
-                    var estimatedPos = Merge.LinearBlend(forwardList[i - 1], backwardList[^i],
+                    var estimatedPos = Merge.SmoothStepBlend(forwardList[i - 1], backwardList[^i],
                         (float)(i - 1) / (motionData.SkipFrames - 2));
                     motionData.PosList[prevMeasuredId - 1 + i] = estimatedPos;
                 }
@@ -91,6 +91,7 @@ namespace BNSApp.Solver
             var nearestMotionType = Utils.MotionType.Back;
             nearestCurrentPose = new Pose();
             nearestFuturePose = new Pose();
+            var minMotionId = 99;
             foreach (var trainMotion in trainData.MotionList)
             {
                 for (int i = 0; i < trainMotion.Length; i++)
@@ -119,6 +120,7 @@ namespace BNSApp.Solver
                         nearestCurrentPose = currentTrainPose;
                         nearestFuturePose = trainMotion.PosList[i + direction];
                         nearestMotionType = Utils.GetMotionType(trainMotion.MotionId);
+                        minMotionId = trainMotion.MotionId;
                     }
                 }
             }

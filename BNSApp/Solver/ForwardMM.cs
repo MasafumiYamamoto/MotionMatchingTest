@@ -37,18 +37,18 @@ namespace BNSApp.Solver
                 var measuredFuturePose = testData.PosList[nextMeasuredIndex];
                 var nextPose = FindNextPose(trainContainer,
                     pastPose2, pastPose, currentPose, measuredFuturePose,
-                    testData.MotionId, i, nextMeasuredIndex);
+                    testData.MotionId, i, nextMeasuredIndex, testData.SkipFrames);
                 testData.PosList[i + 1] = nextPose;
             }
         }
 
         private Pose FindNextPose(MotionContainer trainContainer,
             Pose pastPose2, Pose pastPose, Pose currentPose, Pose futurePose,
-            int motionId, int currentFrameIndex, int futureFrameIndex)
+            int motionId, int currentFrameIndex, int futureFrameIndex, int skipFrames)
         {
             SearchBestPose(trainContainer,
                 pastPose2, pastPose, currentPose, futurePose,
-                motionId, currentFrameIndex, futureFrameIndex,
+                motionId, currentFrameIndex, futureFrameIndex, skipFrames,
                 out var nearestCurrentPose, out var nearestFuturePose);
             var poseDelta = Utils.ComputeDelta(nearestCurrentPose, nearestFuturePose);
             return currentPose.Add(poseDelta);
@@ -56,7 +56,7 @@ namespace BNSApp.Solver
 
         private void SearchBestPose(MotionContainer trainData,
             Pose pastPose2, Pose pastPose, Pose currentPose, Pose futurePose,
-            int motionId, int currentFrameIndex, int futureFrameIndex,
+            int motionId, int currentFrameIndex, int futureFrameIndex, int skipFrames,
             out Pose nearestCurrentPose, out Pose nearestFuturePose)
         {
             var testMotionType = Utils.GetMotionType(motionId);
@@ -105,7 +105,7 @@ namespace BNSApp.Solver
                     var tmpFuturePose = currentPose.Add(deltaPose);
                     var futureCost = Cost.CalcAbsolutePosCost(tmpFuturePose, futurePose);
                     futureCost *= Cost.CalcMotionTypeCost(trainMotionType, testMotionType);
-                    futureCost *= Cost.CalcFrameCost(currentFrameIndex, futureFrameIndex);
+                    futureCost *= Cost.CalcFrameCost(currentFrameIndex, futureFrameIndex, skipFrames);
 
                     totalCost += futureCost;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using BNSApp.Skelton;
 
@@ -150,10 +151,10 @@ namespace BNSApp
         /// <param name="currentFrameIndex"></param>
         /// <param name="futureFrameIndex"></param>
         /// <returns></returns>
-        public static float CalcFrameCost(int currentFrameIndex, int futureFrameIndex)
+        public static float CalcFrameCost(int currentFrameIndex, int futureFrameIndex, int skipFrames)
         {
-            var delta = futureFrameIndex - currentFrameIndex;
-            var k =  (45 - delta) / 45f;
+            var delta = MathF.Abs(futureFrameIndex - currentFrameIndex);
+            var k = (skipFrames - delta) / skipFrames;
             return k*4;
         }
     }

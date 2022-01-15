@@ -17,6 +17,15 @@ namespace BNSApp
                 Joints.Add(Vector3.Zero);
             }
         }
+
+        public Pose(Pose pose)
+        {
+            Joints = new List<Vector3>();
+            foreach (var poseJoint in pose.Joints)
+            {
+                Joints.Add(poseJoint);
+            }
+        }
         public Pose(List<Vector3> joints)
         {
             Joints = joints;

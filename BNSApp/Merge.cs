@@ -29,7 +29,7 @@ namespace BNSApp
         public static Pose SmoothStepBlend(Pose forward, Pose backward, float ratio)
         {
             ratio = MathF.Min(ratio, 1);
-            ratio = SmoothStep(0.3f, 0.7f, ratio);
+            ratio = SmoothStep(0.2f, 0.8f, ratio);
             return LinearBlend(forward, backward, ratio);
         }
 

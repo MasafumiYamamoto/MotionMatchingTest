@@ -41,6 +41,13 @@ namespace BNSApp
             SolveOneMotion(testMotion, trainData, solver);
             testData.SaveData(testOutputFileName);
         }
+        
+        public enum RunType
+        {
+            OneMotion,
+            OneFile,
+            All
+        }
 
         static void Main(string[] args)
         {
@@ -48,32 +55,28 @@ namespace BNSApp
             var easyData = new MotionContainer($"{InputDirectory}/test/test_easy.csv", 5);
             var normalData = new MotionContainer($"{InputDirectory}/test/test_normal.csv", 15);
             var hardData = new MotionContainer($"{InputDirectory}/test/test_hard.csv", 45);
-            
-            var solver = new BlendInterpolation();
             var startTime = DateTime.Now;
             Console.WriteLine($"Start: {startTime:yyyy/MM/dd HH:mm:ss}");
-
-            // 特定のモーションだけ動かすならここ
-            if (false)
+            
+            ISolver solver = new HistoricalBDMM();
+            var type = RunType.OneFile;
+            var testData = normalData;
+            switch (type)
             {
-                var testData = hardData;
-                var id = 98;
-                SolveOneMotionById(testData, id, trainData, solver);
+                case RunType.OneMotion: // 特定のモーションだけを動かす場合
+                    var id = 98;
+                    SolveOneMotionById(testData, id, trainData, solver);
+                    break;
+                case RunType.OneFile: // １ファイルまとめて処理するならここ
+                    SolveOneTestFile(testData, trainData, solver);
+                    break;
+                case RunType.All: // 全部まとめて処理するならここ
+                    RunAll(solver, trainData, easyData, normalData, hardData);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            // １ファイルまとめて処理するならここ
-            if (false)
-            {
-                var testData = easyData;
-                SolveOneTestFile(testData, trainData, solver);
-            }
-
-            // 全部まとめて処理するならここ
-            if (true)
-            {
-                RunAll(solver, trainData, easyData, normalData, hardData);
-            }
-
+            
             var finishTime = DateTime.Now;
             Console.WriteLine($"Finish {finishTime:yyyy/MM/dd HH:mm:ss}");
             Console.WriteLine($"Total Running Time: {finishTime-startTime}");

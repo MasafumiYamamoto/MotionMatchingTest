@@ -49,6 +49,26 @@ namespace BNSApp
         }
 
         /// <summary>
+        /// ボーン指定での単純な各ボーンの位置情報を利用してのコスト計算
+        /// </summary>
+        /// <param name="p0"></param>
+        /// <param name="p1"></param>
+        /// <param name="indexList">誤差計算に利用する関節リスト</param>
+        /// <returns></returns>
+        public static float CalcAbsolutePartPosCost(Pose p0, Pose p1, List<int> indexList)
+        {
+            var cost = 0f;
+            foreach (var index in indexList)
+            {
+                var j0 = p0.Joints[index];
+                var j1 = p1.Joints[index];
+                cost += (j0 - j1).Length();
+            }
+
+            return cost;
+        }
+
+        /// <summary>
         /// ２つのモーションが同一種類かで重みづけ
         /// </summary>
         /// <param name="type0"></param>

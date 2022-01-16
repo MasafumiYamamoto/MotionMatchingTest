@@ -157,5 +157,12 @@ namespace BNSApp
             var k = (skipFrames - delta) / skipFrames;
             return k*4;
         }
+
+        public static float CalcPastWeight(int i, int historySize)
+        {
+            float weight = historySize - i;
+            weight /= historySize;
+            return weight;
+        }
     }
 }

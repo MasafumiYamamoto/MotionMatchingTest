@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BNSApp.Solver
 {
@@ -20,14 +21,11 @@ namespace BNSApp.Solver
             var forwardList = new List<Pose>();
             // 合計５フレーム分履歴情報として利用したいのでデータを別途計算しておく
             forwardList.Add(testData.PosList[0]);
-            // 一旦１フレだけ使ってフレーム補間
-            for (var i = 0; i < historySize - 1; i++)
-            {
-                forwardList.Add(Utils.FindNextFrame(trainContainer, forwardList[i], 1, testData.MotionId));
-            }
+            // １フレーム目はどうしようもないので最近傍探索
+            forwardList.Add(Utils.FindNextFrame(trainContainer, forwardList[^1], 1, testData.MotionId));
 
             // 順方向に補間を埋めていく
-            for (var i = historySize-1; i < testData.Length - 1; i++)
+            for (var i = 1; i < testData.Length - 1; i++)
             {
                 var nextMeasuredIndex = (i / testData.SkipFrames + 1) * testData.SkipFrames;
 
@@ -41,9 +39,9 @@ namespace BNSApp.Solver
                 // 補間対象ならいつも通り計算
                 var currentPose = forwardList[^1];
                 var pastPoseList = new List<Pose>();
-                for (var k = 0; k < historySize - 1; k++)
+                for (var k = 0; k < MathF.Min(i, historySize - 1); k++)
                 {
-                    pastPoseList.Add(forwardList[^(k + 1)]);
+                    pastPoseList.Add(forwardList[^(k + 2)]);
                 }
 
                 var measuredFuturePose = testData.PosList[nextMeasuredIndex];
@@ -58,14 +56,10 @@ namespace BNSApp.Solver
 
             // 合計５フレーム分履歴情報として利用したい
             backwardList.Add(testData.PosList[^1]);
-            // 同じく一旦１フレだけ使ってフレーム補間
-            for (var i = 0; i < historySize - 1; i++)
-            {
-                backwardList.Add(Utils.FindNextFrame(trainContainer, backwardList[i], -1, testData.MotionId));
-            }
+            backwardList.Add(Utils.FindNextFrame(trainContainer, backwardList[^1], -1, testData.MotionId));
 
             // 逆方向に補間を埋めていく
-            for (var i = testData.Length - historySize; i > 0; i--)
+            for (var i = testData.Length - 2; i > 0; i--)
             {
                 var nextMeasuredIndex = (i / testData.SkipFrames) * testData.SkipFrames;
 
@@ -79,9 +73,9 @@ namespace BNSApp.Solver
                 // 補間対象ならいつも通り計算
                 var currentPose = backwardList[^1];
                 var pastPoseList = new List<Pose>();
-                for (var k = 0; k < historySize - 1; k++)
+                for (var k = 0; k < MathF.Min(testData.Length - 1 - i, historySize - 1); k++)
                 {
-                    pastPoseList.Add(backwardList[^(k + 1)]);
+                    pastPoseList.Add(backwardList[^(k + 2)]);
                 }
 
                 var measuredFuturePose = testData.PosList[nextMeasuredIndex];

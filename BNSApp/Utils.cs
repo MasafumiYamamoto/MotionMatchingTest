@@ -130,9 +130,9 @@ namespace BNSApp
         {
             var outputFileName = testData.TestDifficulty switch
             {
-                Difficulty.Easy => $"{outputDirectory}/EasyOutput{postFix}.csv",
-                Difficulty.Normal => $"{outputDirectory}/NormalOutput{postFix}.csv",
-                Difficulty.Hard => $"{outputDirectory}/HardOutput{postFix}.csv",
+                Difficulty.Easy => $"{outputDirectory}/EasyOut{postFix}.csv",
+                Difficulty.Normal => $"{outputDirectory}/NormalOut{postFix}.csv",
+                Difficulty.Hard => $"{outputDirectory}/HardOut{postFix}.csv",
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -238,6 +238,29 @@ namespace BNSApp
             cost += CalcBoneLength(p0, SkeltonData.rightFoot2RightToes);
 
             return cost;
+        }
+
+        public static Pose ApplySplitBodyDelta(in Pose currentPose, in Pose lowerDelta, in Pose upperDelta)
+        {
+            var res = new Pose();
+            var lowerRootMotion = lowerDelta.Joints[0];
+            var lowerIndexes = SkeltonData.GetLowerBoneIndexList();
+            var upperIndexes = SkeltonData.GetUpperBoneIndexList();
+            for (var i = 0; i < currentPose.Joints.Count; i++)
+            {
+                if (lowerIndexes.Contains(i))
+                {
+                    res.Joints[i] = currentPose.Joints[i] + lowerDelta.Joints[i];
+                }
+
+                // 上半身はRootを適用せずに下半身の差分を適用する
+                if (upperIndexes.Contains(i) && i != 0)
+                {
+                    res.Joints[i] = currentPose.Joints[i] + upperDelta.Joints[i];
+                }
+            }
+
+            return res;
         }
     }
 }

@@ -182,34 +182,24 @@ namespace BNSApp.Solver
                     minMotionId = trainMotion.MotionId;
                 }
             }
-            // Console.WriteLine($"{direction} {currentFrameIndex} {minMotionId}");
+            Console.WriteLine($"{direction} {currentFrameIndex} {minMotionId} {minCost}");
         }
 
         private bool IsWalkingMotion(Utils.MotionType testMotionType)
         {
-            switch (testMotionType)
+            return testMotionType switch
             {
-                case Utils.MotionType.Hello:
-                    return false;
-                case Utils.MotionType.Hand1:
-                    return false;
-                case Utils.MotionType.Hand2:
-                    return false;
-                case Utils.MotionType.Run:
-                    return true;
-                case Utils.MotionType.Finger:
-                    return false;
-                case Utils.MotionType.Walk:
-                    return true;
-                case Utils.MotionType.Back:
-                    return true;
-                case Utils.MotionType.Side1:
-                    return true;
-                case Utils.MotionType.Side2:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(testMotionType), testMotionType, null);
-            }
+                Utils.MotionType.Hello => false,
+                Utils.MotionType.Hand1 => false,
+                Utils.MotionType.Hand2 => false,
+                Utils.MotionType.Run => true,
+                Utils.MotionType.Finger => false,
+                Utils.MotionType.Walk => true,
+                Utils.MotionType.Back => true,
+                Utils.MotionType.Side1 => true,
+                Utils.MotionType.Side2 => true,
+                _ => throw new ArgumentOutOfRangeException(nameof(testMotionType), testMotionType, null)
+            };
         }
     }
 }

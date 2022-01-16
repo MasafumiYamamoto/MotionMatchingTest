@@ -244,6 +244,7 @@ namespace BNSApp
         {
             var res = new Pose();
             var lowerRootMotion = lowerDelta.Joints[0];
+            var upperRootMotion = upperDelta.Joints[0];
             var lowerIndexes = SkeltonData.GetLowerBoneIndexList();
             var upperIndexes = SkeltonData.GetUpperBoneIndexList();
             for (var i = 0; i < currentPose.Joints.Count; i++)
@@ -254,9 +255,10 @@ namespace BNSApp
                 }
 
                 // 上半身はRootを適用せずに下半身の差分を適用する
-                if (upperIndexes.Contains(i) && i != 0)
+                if (upperIndexes.Contains(i))
                 {
                     res.Joints[i] = currentPose.Joints[i] + upperDelta.Joints[i];
+                    res.Joints[i] = res.Joints[i] - upperRootMotion + lowerRootMotion;
                 }
             }
 

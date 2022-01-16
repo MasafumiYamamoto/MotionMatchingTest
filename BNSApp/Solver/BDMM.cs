@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using BNSApp.Skelton;
 
 namespace BNSApp.Solver
 {
@@ -101,6 +103,7 @@ namespace BNSApp.Solver
             var minCost = float.MaxValue;
             nearestCurrentPose = new Pose();
             nearestFuturePose = new Pose();
+            var minMotionId = 000;
 
             foreach (var trainMotion in trainData.MotionList)
             {
@@ -128,6 +131,9 @@ namespace BNSApp.Solver
                     cost *= Cost.CalcMotionTypeCost(trainMotionType, testMotionType);
                     totalCost += cost;
 
+                    // 骨の回転で誤差を求めてみる
+                    var past2CurrentDeltaTrain = Utils.ComputeDelta(pastTrainPose, currentTrainPose);
+                    var past2CurrentDeltaTest = Utils.ComputeDelta(pastPose, currentPose);
                     var pastCost = Cost.CalcRootCost(pastTrainPose, pastPose);
                     pastCost *= Cost.CalcMotionTypeCost(trainMotionType, testMotionType);
                     totalCost += pastCost;
@@ -148,8 +154,10 @@ namespace BNSApp.Solver
                     minCost = totalCost;
                     nearestCurrentPose = currentTrainPose;
                     nearestFuturePose = trainMotion.PosList[i + direction];
+                    minMotionId = trainMotion.MotionId;
                 }
             }
+            // Console.WriteLine($"{direction} {currentFrameIndex} {minMotionId}");
         }
     }
 }
